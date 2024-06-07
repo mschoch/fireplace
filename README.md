@@ -72,6 +72,12 @@ const s3conf = {
 connect.aws(database, s3conf);
 ```
 
+## Apps included
+
+Currently we ship with two apps included, the source for them is available here:
+- [Fireplace Admin](https://github.com/mschoch/fireplace-admin)
+- [ToDo](https://github.com/mschoch/fireplace-todo)
+
 ## Notes
 
 - Currently Fireplace cannot actually read the database itself.  It simply hosts the means by which you can do so in the browser.  Over time it would be nice to build out the Go implementation, so that fireplace could more meaningfully interact with the data directly.
