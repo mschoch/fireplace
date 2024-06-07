@@ -1,0 +1,7 @@
+{
+  "name": "todo",
+  "hostname": "todo",
+  "bindAddr": ":443",
+  "autoStart": true,
+  "localPath": "apps/todo/todo.zip"
+}

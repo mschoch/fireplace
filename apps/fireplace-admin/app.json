@@ -1,0 +1,7 @@
+{
+  "name": "fireplace-admin",
+  "hostname": "fireplace",
+  "bindAddr": ":443",
+  "autoStart": true,
+  "localPath": "apps/fireplace-admin/fireplace-admin.zip"
+}
