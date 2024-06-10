@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	_ "github.com/lib/pq"
 )
 

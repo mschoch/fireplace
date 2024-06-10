@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
 	"tailscale.com/client/tailscale"
 )
@@ -182,6 +182,9 @@ func decodeUploadGetRequest(ctx context.Context, r *http.Request) (interface{}, 
 	}
 	var metaRequest MetaRequest
 	err = json.Unmarshal(bodyBytes, &metaRequest)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing meta json: %w", err)
+	}
 
 	return uploadGetRequest{
 		typ:    r.FormValue("type"),
@@ -242,6 +245,9 @@ func decodeSetMetaRequest(ctx context.Context, r *http.Request) (interface{}, er
 	}
 	var metaRequest MetaRequest
 	err = json.Unmarshal(bodyBytes, &metaRequest)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing meta json: %w", err)
+	}
 
 	return setMetaRequest{
 		typ:    r.FormValue("type"),

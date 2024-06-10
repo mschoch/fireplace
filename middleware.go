@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"tailscale.com/client/tailscale"
 )
 

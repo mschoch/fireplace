@@ -16,7 +16,7 @@ import (
 	"tailscale.com/client/tailscale"
 	"tailscale.com/tsnet"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 )
 
 type Service interface {
@@ -91,7 +91,7 @@ func (s *service) walkMetaDir(root string) error {
 func (s *service) Who(lc *tailscale.LocalClient, remoteAddr string) (*UserProfile, error) {
 	who, err := lc.WhoIs(context.Background(), remoteAddr)
 	if err != nil {
-
+		return nil, fmt.Errorf("tailscale local client whois error: %w", err)
 	}
 
 	return &UserProfile{
@@ -154,9 +154,14 @@ func (s *service) LaunchApplication(app *Application) error {
 	h := makeHandlerForApplication(app, s, lc, s.log)
 
 	go func() {
-		http.Serve(ln, h)
+		err2 := http.Serve(ln, h)
+		if err2 != nil {
+			s.log.Log("msg", "http serve for application %q returned %w", app.Name, err2)
+		}
 	}()
 
+	s.mRunningApplications.Lock()
+	defer s.mRunningApplications.Unlock()
 	s.runningApplications[app.Name] = RunningApplication{
 		server:   srv,
 		listener: ln,
@@ -174,6 +179,8 @@ type RunningApplication struct {
 }
 
 func (s *service) RunningApplications(lc *tailscale.LocalClient) ([]*Application, error) {
+	s.mRunningApplications.RLock()
+	defer s.mRunningApplications.RUnlock()
 	rv := make([]*Application, 0, len(s.runningApplications))
 	for _, v := range s.runningApplications {
 		status, err := lc.Status(context.Background())
@@ -273,7 +280,7 @@ func (s *service) Data(name, car string) (io.ReadCloser, error) {
 	fullPath := filepath.Join(s.dataDir, name, car)
 	carFile, err := os.Open(fullPath)
 	if err != nil {
-		return nil, fmt.Errorf("error opening car file %q:%w", carFile, err)
+		return nil, fmt.Errorf("error opening car file %q:%w", fullPath, err)
 	}
 
 	return carFile, nil
