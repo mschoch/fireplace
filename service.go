@@ -70,7 +70,23 @@ func newService(l log.Logger, dataDir, metaDir, appsDir, tsnetDir string, logts 
 	}
 }
 
+func ensureDirectoriesExist(paths ...string) error {
+	for _, path := range paths {
+		err := os.MkdirAll(path, 0700)
+		if err != nil {
+			return fmt.Errorf("mkdirall %q error: %w", path, err)
+		}
+	}
+	return nil
+}
+
 func (s *service) init() error {
+	// ensure that the directories we require exist
+	err := ensureDirectoriesExist(s.metaDir, s.dataDir, s.tsnetDir, s.appsDir)
+	if err != nil {
+		return fmt.Errorf("error ensuring required directory exists: %w", err)
+	}
+
 	s.mKnownDatabaseVersions.Lock()
 	defer s.mKnownDatabaseVersions.Unlock()
 	return s.walkMetaDir(s.metaDir)
