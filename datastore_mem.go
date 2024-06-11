@@ -12,7 +12,7 @@ type DataStoreMemory struct {
 	data map[string][]byte
 }
 
-func NewMemoryDataStore(root string) *DataStoreMemory {
+func NewMemoryDataStore() *DataStoreMemory {
 	return &DataStoreMemory{
 		data: make(map[string][]byte),
 	}
