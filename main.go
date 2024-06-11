@@ -31,18 +31,25 @@ func main() {
 		logger = log.With(logger, "caller", log.DefaultCaller)
 	}
 
-	var internalS *service
-	var s Service
-	{
-		internalS = newService(logger, *dataDir, *metaDir, *appsDir, *tsnetDir, *logts)
-		s = internalS
-		s = newLoggingMiddleware(logger)(s)
+	// ensure that the directories we require exist
+	err := ensureDirectoriesExist(*metaDir, *dataDir, *tsnetDir, *appsDir)
+	if err != nil {
+		logger.Log("msg", "error ensuring required directory exists", "err", err)
+		os.Exit(1)
 	}
 
-	err := internalS.init()
+	dataStore := NewFileSystemDataStore(*dataDir)
+	metaStore := NewFileSystemMetaStore(*metaDir)
+	err = metaStore.Init()
 	if err != nil {
-		logger.Log("msg", "error initializing services", "err", err.Error())
+		logger.Log("msg", "error initializing meta store", "err", err)
 		os.Exit(1)
+	}
+
+	var s Service
+	{
+		s = newService(logger, dataStore, metaStore, *appsDir, *tsnetDir, *logts)
+		s = newLoggingMiddleware(logger)(s)
 	}
 
 	errs := make(chan error)
@@ -94,5 +101,15 @@ func autoStartApps(appDir string, s Service, logger log.Logger) error {
 		return fmt.Errorf("error walking meta dir: %w", err)
 	}
 
+	return nil
+}
+
+func ensureDirectoriesExist(paths ...string) error {
+	for _, path := range paths {
+		err := os.MkdirAll(path, 0700)
+		if err != nil {
+			return fmt.Errorf("mkdirall %q error: %w", path, err)
+		}
+	}
 	return nil
 }
