@@ -176,16 +176,6 @@ type uploadGetRequest struct {
 }
 
 func decodeUploadGetRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	bodyBytes, err := io.ReadAll(r.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading body: %w", err)
-	}
-	var metaRequest MetaRequest
-	err = json.Unmarshal(bodyBytes, &metaRequest)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing meta json: %w", err)
-	}
-
 	return uploadGetRequest{
 		typ:    r.FormValue("type"),
 		name:   r.FormValue("name"),
