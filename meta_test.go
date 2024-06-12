@@ -48,3 +48,43 @@ func TestMetaDataKey(t *testing.T) {
 		})
 	}
 }
+
+func TestDataKey(t *testing.T) {
+
+	tests := []struct {
+		in    DataKey
+		valid bool
+		name  string
+	}{
+		{
+			in:    "fp.topics",
+			valid: true,
+			name:  "topics",
+		},
+		{
+			in:    "fp",
+			valid: false,
+		},
+		{
+			in:    "xp.topics",
+			valid: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(string(test.in), func(t *testing.T) {
+			valid := test.in.Valid()
+			if valid != test.valid {
+				t.Errorf("expected valid %T, got %T", test.valid, valid)
+				return
+			}
+
+			if valid {
+				name := test.in.Name()
+				if name != test.name {
+					t.Errorf("expected name %s, got %s", test.name, name)
+				}
+			}
+		})
+	}
+}
