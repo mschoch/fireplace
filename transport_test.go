@@ -242,7 +242,7 @@ func setupTest(t *testing.T) (log.Logger, *service, *Application, http.Handler) 
 	}
 
 	dataStore := NewMemoryDataStore()
-	metaStore := NewMemoryMetaStore()
+	metaStore := NewMemoryMetaStore(logger)
 	svc := newService(logger, dataStore, metaStore, "", "", false)
 
 	testApp := &Application{

@@ -6,18 +6,24 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/go-kit/log"
 )
+
+var _ MetaStore = (*MetaStoreFileSystem)(nil)
 
 type MetaStoreFileSystem struct {
 	rootDir string
+	log     log.Logger
 
 	mKnownDatabaseVersions sync.RWMutex
 	knownDatabaseVersions  map[string]string
 }
 
-func NewFileSystemMetaStore(root string) *MetaStoreFileSystem {
+func NewFileSystemMetaStore(root string, log log.Logger) *MetaStoreFileSystem {
 	return &MetaStoreFileSystem{
 		rootDir:               root,
+		log:                   log,
 		knownDatabaseVersions: make(map[string]string),
 	}
 }
@@ -55,7 +61,12 @@ func (m *MetaStoreFileSystem) Set(name, branch string, meta *MetaRequest, metaRa
 		return fmt.Errorf("error uploading: %w", err)
 	}
 
-	// FIXME now try to delete the parents
+	for _, parent := range meta.Parents {
+		err = m.Delete(name, branch, parent)
+		if err != nil {
+			m.log.Log("msg", "error deleting parent, name:%q cid:%q", name, parent)
+		}
+	}
 
 	// now update our in memory table
 	mdk := MetaDataKey(name)
@@ -110,4 +121,9 @@ func (m *MetaStoreFileSystem) Databases() ([]*Database, error) {
 		})
 	}
 	return rv, nil
+}
+
+func (m *MetaStoreFileSystem) Delete(name, branch, cid string) error {
+	fullPath := filepath.Join(m.rootDir, name, cid)
+	return os.Remove(fullPath)
 }
