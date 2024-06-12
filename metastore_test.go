@@ -2,21 +2,31 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 	"testing"
+
+	"github.com/go-kit/log"
 )
 
 func TestMetaStores(t *testing.T) {
+	var logger log.Logger
+	{
+		logger = log.NewLogfmtLogger(os.Stderr)
+		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+		logger = log.With(logger, "caller", log.DefaultCaller)
+	}
+
 	tests := []struct {
 		name string
 		m    MetaStore
 	}{
 		{
 			name: "mem",
-			m:    NewMemoryMetaStore(),
+			m:    NewMemoryMetaStore(logger),
 		},
 		{
 			name: "fs",
-			m:    NewFileSystemMetaStore(t.TempDir()),
+			m:    NewFileSystemMetaStore(t.TempDir(), logger),
 		},
 	}
 

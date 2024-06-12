@@ -39,7 +39,7 @@ func main() {
 	}
 
 	dataStore := NewFileSystemDataStore(*dataDir)
-	metaStore := NewFileSystemMetaStore(*metaDir)
+	metaStore := NewFileSystemMetaStore(*metaDir, logger)
 	err = metaStore.Init()
 	if err != nil {
 		logger.Log("msg", "error initializing meta store", "err", err)

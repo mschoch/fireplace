@@ -2,7 +2,11 @@ package main
 
 import (
 	"sync"
+
+	"github.com/go-kit/log"
 )
+
+var _ MetaStore = (*MetaStoreMemory)(nil)
 
 type metaReqsByCID map[string]*MetaRequest
 
@@ -12,12 +16,14 @@ type MetaStoreMemory struct {
 	m                     sync.RWMutex
 	meta                  metaReqsByCIDByName
 	knownDatabaseVersions map[string]string
+	log                   log.Logger
 }
 
-func NewMemoryMetaStore() *MetaStoreMemory {
+func NewMemoryMetaStore(log log.Logger) *MetaStoreMemory {
 	return &MetaStoreMemory{
 		meta:                  make(metaReqsByCIDByName),
 		knownDatabaseVersions: make(map[string]string),
+		log:                   log,
 	}
 }
 
@@ -39,7 +45,12 @@ func (m *MetaStoreMemory) Set(name, branch string, meta *MetaRequest, _ []byte) 
 		m.meta[name] = metaReqByCID
 	}
 
-	// FIXME now try to delete the parents
+	for _, parent := range meta.Parents {
+		err := m.Delete(name, branch, parent)
+		if err != nil {
+			m.log.Log("msg", "error deleting parent, name:%q cid:%q", name, parent)
+		}
+	}
 
 	// now update our in memory table
 	mdk := MetaDataKey(name)
@@ -76,4 +87,16 @@ func (m *MetaStoreMemory) Databases() ([]*Database, error) {
 		})
 	}
 	return rv, nil
+}
+
+func (m *MetaStoreMemory) Delete(name, branch, cid string) error {
+	m.m.Lock()
+	defer m.m.Unlock()
+
+	byName, nameExists := m.meta[name]
+	if nameExists {
+		delete(byName, cid)
+	}
+
+	return nil
 }
