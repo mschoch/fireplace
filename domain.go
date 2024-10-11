@@ -1,5 +1,7 @@
 package main
 
+import cidlink "github.com/ipld/go-ipld-prime/linking/cid"
+
 type UploadRequestResponse struct {
 	UploadURL string `json:"uploadURL"`
 	Key       string `json:"Key"`
@@ -42,4 +44,9 @@ type Application struct {
 
 	// these are determined at runtime and not persisted
 	URL string `json:"url"`
+}
+
+type DBMeta struct {
+	CAR cidlink.Link `json:"car"`
+	Key string       `json:"key"`
 }
