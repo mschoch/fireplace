@@ -113,7 +113,7 @@ func TestDownloadMeta(t *testing.T) {
 	dbKey := MetaDataKeyFromDatabaseVersion(dbName, "0.18")
 	sum := sha256.Sum256([]byte("fireplace"))
 	carNoExt := fmt.Sprintf("%x", sum)
-	contents := "TOPSECRET"
+	contents := `{"car": {"/":"bafkreiajkcu646s3w522spmlfuuhm67dke6jayqvgj7r5mir5ruhmpaa5y"}, "key": "key"}`
 
 	mr := &MetaRequest{
 		CID:     carNoExt,
@@ -171,7 +171,7 @@ func TestUploadMeta(t *testing.T) {
 	dbKey := MetaDataKeyFromDatabaseVersion(dbName, "0.18")
 	sum := sha256.Sum256([]byte("fireplace"))
 	carNoExt := fmt.Sprintf("%x", sum)
-	contents := "TOPSECRET"
+	contents := `{"car": {"/":"bafkreiajkcu646s3w522spmlfuuhm67dke6jayqvgj7r5mir5ruhmpaa5y"}, "key": "key"}`
 
 	mr := &MetaRequest{
 		CID:     carNoExt,
