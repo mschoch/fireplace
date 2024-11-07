@@ -99,6 +99,8 @@ github.com/gorilla/securecookie v1.1.2 h1:YCIWL56dvtr73r6715mJs5ZvhtnY73hBvEF8kX
 github.com/gorilla/securecookie v1.1.2/go.mod h1:NfCASbcHqRSY+3a8tlWJwsQap2VX5pwzwo4h3eOamfo=
 github.com/gorilla/websocket v1.5.1 h1:gmztn0JnHVt9JZquRuzLw3g4wouNVzKL15iLr/zn/QY=
 github.com/gorilla/websocket v1.5.1/go.mod h1:x3kM2JMyaluk02fnUJpQuwD2dCS5NDG2ZHL0uE0tcaY=
+github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
+github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/hdevalence/ed25519consensus v0.2.0 h1:37ICyZqdyj0lAZ8P4D1d1id3HqbbG1N3iBb1Tb4rdcU=
 github.com/hdevalence/ed25519consensus v0.2.0/go.mod h1:w3BHWjwJbFU29IRHL1Iqkw3sus+7FctEyM4RqDxYNzo=
 github.com/illarion/gonotify v1.0.1 h1:F1d+0Fgbq/sDWjj/r66ekjDG+IDeecQKUFH4wNwsoio=
@@ -152,6 +154,12 @@ github.com/mitchellh/go-ps v1.0.0/go.mod h1:J4lOc8z8yJs6vUwklHw2XEIiT4z4C40KtWVN
 github.com/mr-tron/base58 v1.1.0/go.mod h1:xcD2VGqlgYjBdcBLw+TuYLr8afG+Hj8g2eTVqeSzSU8=
 github.com/mr-tron/base58 v1.2.0 h1:T/HDJBh4ZCPbU39/+c3rRvE0uKBQlU27+QI8LJ4t64o=
 github.com/mr-tron/base58 v1.2.0/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=
+github.com/mschoch/pkws v0.0.0-20241101035413-84e8246ff86e h1:Z38Bkmm91z0hcwu1XYTWvaccJfdZ6ArA1vBNZ93tfKw=
+github.com/mschoch/pkws v0.0.0-20241101035413-84e8246ff86e/go.mod h1:3uR7YydTak1kcLwYPFkmOqm6FPPjNEgaBCTF6yOkHKw=
+github.com/mschoch/pkws v0.0.0-20241107141255-038590c8a644 h1:MYv7+KyheFKBIDLpbD85atfOb/WfiX3OBPAryFeCc4k=
+github.com/mschoch/pkws v0.0.0-20241107141255-038590c8a644/go.mod h1:3uR7YydTak1kcLwYPFkmOqm6FPPjNEgaBCTF6yOkHKw=
+github.com/mschoch/pkws v0.0.0-20241107143958-7312bc4e47b3 h1:DglugFVx6zpHjUybXf9IQh0sHobZOX4dKSkU7JpBKe4=
+github.com/mschoch/pkws v0.0.0-20241107143958-7312bc4e47b3/go.mod h1:3uR7YydTak1kcLwYPFkmOqm6FPPjNEgaBCTF6yOkHKw=
 github.com/multiformats/go-base32 v0.0.3 h1:tw5+NhuwaOjJCC5Pp82QuXbrmLzWg7uxlMFp8Nq/kkI=
 github.com/multiformats/go-base32 v0.0.3/go.mod h1:pLiuGC8y0QR3Ue4Zug5UzK9LjgbkL8NSQj0zQ5Nz/AA=
 github.com/multiformats/go-base36 v0.1.0 h1:JR6TyF7JjGd3m6FbLU2cOxhC0Li8z8dLNGQ89tUg4F4=

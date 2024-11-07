@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/log"
 	"github.com/gorilla/mux"
+	"github.com/mschoch/pkws"
 	"tailscale.com/client/tailscale"
 )
 
@@ -83,6 +85,15 @@ func makeHandlerForApplication(app *Application, ts Service, lc *tailscale.Local
 	r.Handle("/api/upload", setMetaHandler).Methods("PUT")
 
 	r.Handle("/api/websocket", webSocketHandler)
+
+	// v0.19 pkws
+
+	fpCtx := &fireproofContext{svc: ts}
+	slogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
+
+	// create new party server with no prefix (we prefix it externally)
+	ps := pkws.NewPartyServer[*fireproofContext](fpCtx, "", slogger)
+	r.Handle("/parties", http.StripPrefix("/parties", ps))
 
 	// fireplace api
 	r.Handle("/api/who", whoHandler).Methods("GET")
