@@ -158,31 +158,31 @@ func (l *Fireproof) OnRequest(w http.ResponseWriter, r *http.Request) {
 			//err = l.room.Storage().Put(fmt.Sprintf("car-%s", carId), carBuf)
 			if err != nil {
 				l.log.Error("error putting to room storage", "err", err)
-				encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error putting to room storage"})
+				_ = encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error putting to room storage"})
 				return
 			}
-			encodeFireproofJSONResponse(w, http.StatusCreated, Res{OK: true})
+			_ = encodeFireproofJSONResponse(w, http.StatusCreated, Res{OK: true})
 			return
 
 		case http.MethodGet:
 			carReader, err := l.ctx.svc.Data(l.room.Name(), carId)
 			//carBuf, err := l.room.Storage().Get(fmt.Sprintf("car-%s", carId))
 			if err != nil || carReader == nil {
-				encodeFireproofJSONResponse(w, http.StatusNotFound, Res{OK: false})
+				_ = encodeFireproofJSONResponse(w, http.StatusNotFound, Res{OK: false})
 				return
 			}
 
 			carBuf, err := io.ReadAll(carReader)
 			if err != nil {
-				encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error reading car buf"})
+				_ = encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error reading car buf"})
 				return
 			}
 			if len(carBuf) == 0 {
-				encodeFireproofJSONResponse(w, http.StatusNotFound, Res{OK: false, Error: "CAR not found"})
+				_ = encodeFireproofJSONResponse(w, http.StatusNotFound, Res{OK: false, Error: "CAR not found"})
 				return
 			}
 			w.WriteHeader(http.StatusOK)
-			w.Write(carBuf)
+			_, _ = w.Write(carBuf)
 			return
 
 		case http.MethodDelete:
@@ -198,11 +198,11 @@ func (l *Fireproof) OnRequest(w http.ResponseWriter, r *http.Request) {
 			//	encodeFireproofJSONResponse(w, http.StatusNotFound, Res{OK: false, Error: "CAR not found"})
 			//	return
 			//}
-			encodeFireproofJSONResponse(w, http.StatusCreated, Res{OK: true})
+			_ = encodeFireproofJSONResponse(w, http.StatusCreated, Res{OK: true})
 			return
 		default:
 			l.log.Error("method not allowed", "method", r.Method)
-			encodeFireproofJSONResponse(w, http.StatusMethodNotAllowed, Res{OK: false, Error: "Method not allowed"})
+			_ = encodeFireproofJSONResponse(w, http.StatusMethodNotAllowed, Res{OK: false, Error: "Method not allowed"})
 			return
 		}
 
@@ -212,24 +212,24 @@ func (l *Fireproof) OnRequest(w http.ResponseWriter, r *http.Request) {
 		case http.MethodGet:
 			metaVals, err := l.ctx.svc.Meta(l.room.Name(), "main")
 			if err != nil {
-				encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "get meta oops"})
+				_ = encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "get meta oops"})
 				return
 			}
 			//metaVals := make([]*CRDTEntry, 0, len(l.clockHead))
 			//for _, v := range l.clockHead {
 			//	metaVals = append(metaVals, v)
 			//}
-			encodeFireproofJSONResponse(w, http.StatusOK, metaVals)
+			_ = encodeFireproofJSONResponse(w, http.StatusOK, metaVals)
 			return
 		case http.MethodPut:
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				l.log.Error("error reading request body", "err", err)
-				encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error reading request body"})
+				_ = encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error reading request body"})
 				return
 			}
 			l.onMessageInternal(body, "server")
-			encodeFireproofJSONResponse(w, http.StatusOK, Res{OK: true})
+			_ = encodeFireproofJSONResponse(w, http.StatusOK, Res{OK: true})
 			return
 		case http.MethodDelete:
 			// FIXME no delete meta
@@ -247,11 +247,11 @@ func (l *Fireproof) OnRequest(w http.ResponseWriter, r *http.Request) {
 			//	encodeFireproofJSONResponse(w, http.StatusInternalServerError, Res{OK: false, Error: "error putting to room storage"})
 			//	return
 			//}
-			encodeFireproofJSONResponse(w, http.StatusOK, Res{OK: true})
+			_ = encodeFireproofJSONResponse(w, http.StatusOK, Res{OK: true})
 			return
 		default:
 			l.log.Error("method not allowed", "method", r.Method)
-			encodeFireproofJSONResponse(w, http.StatusMethodNotAllowed, Res{OK: false, Error: "Method not allowed"})
+			_ = encodeFireproofJSONResponse(w, http.StatusMethodNotAllowed, Res{OK: false, Error: "Method not allowed"})
 			return
 		}
 	}
@@ -293,5 +293,5 @@ func encodeFireproofJSONResponse(w http.ResponseWriter, status int, response any
 
 type Res struct {
 	OK    bool   `json:"ok"`
-	Error string `json:"error,omitempty""`
+	Error string `json:"error,omitempty"`
 }
