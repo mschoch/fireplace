@@ -93,7 +93,8 @@ func makeHandlerForApplication(app *Application, ts Service, lc *tailscale.Local
 
 	// create new party server with no prefix (we prefix it externally)
 	ps := pkws.NewPartyServer[*fireproofContext](fpCtx, "", slogger)
-	r.Handle("/parties", http.StripPrefix("/parties", ps))
+	ps.RegisterServer("fireproof", NewFireproof)
+	r.PathPrefix("/parties").Handler(http.StripPrefix("/parties", ps))
 
 	// fireplace api
 	r.Handle("/api/who", whoHandler).Methods("GET")
