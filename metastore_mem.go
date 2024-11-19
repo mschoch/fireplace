@@ -13,17 +13,17 @@ type metaReqsByCID map[string]*MetaRequest
 type metaReqsByCIDByName map[string]metaReqsByCID
 
 type MetaStoreMemory struct {
-	m                     sync.RWMutex
-	meta                  metaReqsByCIDByName
-	knownDatabaseVersions map[string]string
-	log                   log.Logger
+	m              sync.RWMutex
+	meta           metaReqsByCIDByName
+	knownDatabases map[string]struct{}
+	log            log.Logger
 }
 
 func NewMemoryMetaStore(log log.Logger) *MetaStoreMemory {
 	return &MetaStoreMemory{
-		meta:                  make(metaReqsByCIDByName),
-		knownDatabaseVersions: make(map[string]string),
-		log:                   log,
+		meta:           make(metaReqsByCIDByName),
+		knownDatabases: make(map[string]struct{}),
+		log:            log,
 	}
 }
 
@@ -53,10 +53,7 @@ func (m *MetaStoreMemory) Set(name, branch string, meta *MetaRequest, _ []byte) 
 	}
 
 	// now update our in memory table
-	mdk := MetaDataKey(name)
-	if mdk.Valid() {
-		m.knownDatabaseVersions[mdk.Name()] = mdk.Version()
-	}
+	m.knownDatabases[name] = struct{}{}
 
 	return nil
 }
@@ -79,11 +76,10 @@ func (m *MetaStoreMemory) Meta(name, branch string) ([]*MetaRequest, error) {
 func (m *MetaStoreMemory) Databases() ([]*Database, error) {
 	m.m.RLock()
 	defer m.m.RUnlock()
-	rv := make([]*Database, 0, len(m.knownDatabaseVersions))
-	for name, version := range m.knownDatabaseVersions {
+	rv := make([]*Database, 0, len(m.knownDatabases))
+	for name := range m.knownDatabases {
 		rv = append(rv, &Database{
-			Name:    name,
-			Version: version,
+			Name: name,
 		})
 	}
 	return rv, nil

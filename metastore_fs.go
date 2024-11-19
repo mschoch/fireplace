@@ -17,14 +17,14 @@ type MetaStoreFileSystem struct {
 	log     log.Logger
 
 	mKnownDatabaseVersions sync.RWMutex
-	knownDatabaseVersions  map[string]string
+	knownDatabases         map[string]struct{}
 }
 
 func NewFileSystemMetaStore(root string, log log.Logger) *MetaStoreFileSystem {
 	return &MetaStoreFileSystem{
-		rootDir:               root,
-		log:                   log,
-		knownDatabaseVersions: make(map[string]string),
+		rootDir:        root,
+		log:            log,
+		knownDatabases: make(map[string]struct{}),
 	}
 }
 
@@ -36,9 +36,8 @@ func (m *MetaStoreFileSystem) Init() error {
 
 func (m *MetaStoreFileSystem) walkMetaDir() error {
 	err := filepath.Walk(m.rootDir, func(path string, info os.FileInfo, err error) error {
-		mdk := MetaDataKey(info.Name())
-		if info.IsDir() && mdk.Valid() {
-			m.knownDatabaseVersions[mdk.Name()] = mdk.Version()
+		if info.IsDir() && info.Name() != "meta" {
+			m.knownDatabases[info.Name()] = struct{}{}
 			return nil
 		}
 		return nil
@@ -64,17 +63,14 @@ func (m *MetaStoreFileSystem) Set(name, branch string, meta *MetaRequest, metaRa
 	for _, parent := range meta.Parents {
 		err = m.Delete(name, branch, parent)
 		if err != nil {
-			m.log.Log("msg", "error deleting parent, name:%q cid:%q", name, parent)
+			m.log.Log("msg", "error deleting parent", "name", name, "cid", parent, "err", err)
 		}
 	}
 
 	// now update our in memory table
-	mdk := MetaDataKey(name)
-	if mdk.Valid() {
-		m.mKnownDatabaseVersions.Lock()
-		m.knownDatabaseVersions[mdk.Name()] = mdk.Version()
-		m.mKnownDatabaseVersions.Unlock()
-	}
+	m.mKnownDatabaseVersions.Lock()
+	m.knownDatabases[name] = struct{}{}
+	m.mKnownDatabaseVersions.Unlock()
 
 	return nil
 }
@@ -113,11 +109,10 @@ func (m *MetaStoreFileSystem) Meta(name, branch string) ([]*MetaRequest, error) 
 func (m *MetaStoreFileSystem) Databases() ([]*Database, error) {
 	m.mKnownDatabaseVersions.RLock()
 	defer m.mKnownDatabaseVersions.RUnlock()
-	rv := make([]*Database, 0, len(m.knownDatabaseVersions))
-	for name, version := range m.knownDatabaseVersions {
+	rv := make([]*Database, 0, len(m.knownDatabases))
+	for name := range m.knownDatabases {
 		rv = append(rv, &Database{
-			Name:    name,
-			Version: version,
+			Name: name,
 		})
 	}
 	return rv, nil

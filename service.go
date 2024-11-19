@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -14,10 +12,9 @@ import (
 	"sync"
 
 	"github.com/dustin/go-broadcast"
+	"github.com/go-kit/log"
 	"tailscale.com/client/tailscale"
 	"tailscale.com/tsnet"
-
-	"github.com/go-kit/log"
 )
 
 type Service interface {
@@ -169,38 +166,6 @@ func (s *service) SetMeta(name, branch string, meta *MetaRequest, metaRaw []byte
 	if err != nil {
 		return fmt.Errorf("error storing metadata: %w", err)
 	}
-
-	dataBytes, err := base64.StdEncoding.DecodeString(meta.Data)
-	if err != nil {
-		return fmt.Errorf("error decoding meta data base64: %v", err)
-	}
-	s.log.Log("msg", "decoded base64", "databytes", string(dataBytes))
-
-	var dbm DBMeta
-	err = json.Unmarshal(dataBytes, &dbm)
-	if err != nil {
-		return fmt.Errorf("error decoding db meta: %v", err)
-	}
-
-	s.log.Log("msg", "parsed db meta", "car codec", dbm.CAR, "key", dbm.Key)
-
-	//parsedCID, err := cid.Decode(dbm.CAR)
-	//if err != nil {
-	//	return fmt.Errorf("msg", "error decoding car", "err", err)
-	//}
-	//s.log.Log("msg", "parsed cid", "it", fmt.Sprintf("%#v", parsedCID))
-
-	//dataBuf := bytes.NewBuffer(dataBytes)
-	//nb := basicnode.Prototype.Map.NewBuilder()
-	//err = dagjson.Decode(nb, dataBuf)
-	//if err != nil {
-	//	s.log.Log("msg", "error decoding meta dag json", "err", err)
-	//	//return fmt.Errorf("error decoding meta dag json: %v", err)
-	//} else {
-	//	node := nb.Build()
-	//	node.
-	//		s.log.Log("msg", "no err decoding meta dag json", "built", fmt.Sprintf("%#v", node))
-	//}
 
 	// finally broadcast this to other connected parties
 	metaItems := &MetaItems{
