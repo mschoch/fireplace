@@ -19,8 +19,7 @@ import (
 func TestDownloadDataHandler(t *testing.T) {
 	_, svc, _, handler := setupTest(t)
 
-	dbName := "db1"
-	dbKey := DataKeyFromDatabase(dbName)
+	dbKey := "db1"
 	sum := sha256.Sum256([]byte("fireplace"))
 	car := fmt.Sprintf("%x.car", sum)
 	contents := "TOPSECRET"
@@ -50,8 +49,7 @@ func TestDownloadDataHandler(t *testing.T) {
 func TestUploadDataHandler(t *testing.T) {
 	_, svc, _, handler := setupTest(t)
 
-	dbName := "db1"
-	dbKey := DataKeyFromDatabase(dbName)
+	dbKey := "db1"
 	sum := sha256.Sum256([]byte("fireplace"))
 	car := fmt.Sprintf("%x.car", sum)
 	contents := "TOPSECRET"
@@ -78,8 +76,7 @@ func TestPrepareUploadData(t *testing.T) {
 
 	_, _, _, handler := setupTest(t)
 
-	dbName := "db1"
-	dbKey := DataKeyFromDatabase(dbName)
+	dbKey := "db1"
 	sum := sha256.Sum256([]byte("fireplace"))
 	carNoExt := fmt.Sprintf("%x", sum)
 
@@ -109,8 +106,7 @@ func TestPrepareUploadData(t *testing.T) {
 func TestDownloadMeta(t *testing.T) {
 	_, svc, _, handler := setupTest(t)
 
-	dbName := "db1"
-	dbKey := MetaDataKeyFromDatabaseVersion(dbName, "0.18")
+	dbKey := "db1"
 	sum := sha256.Sum256([]byte("fireplace"))
 	carNoExt := fmt.Sprintf("%x", sum)
 	contents := `{"car": {"/":"bafkreiajkcu646s3w522spmlfuuhm67dke6jayqvgj7r5mir5ruhmpaa5y"}, "key": "key"}`
@@ -167,8 +163,7 @@ func TestDownloadMeta(t *testing.T) {
 func TestUploadMeta(t *testing.T) {
 	_, svc, _, handler := setupTest(t)
 
-	dbName := "db1"
-	dbKey := MetaDataKeyFromDatabaseVersion(dbName, "0.18")
+	dbKey := "db1"
 	sum := sha256.Sum256([]byte("fireplace"))
 	carNoExt := fmt.Sprintf("%x", sum)
 	contents := `{"car": {"/":"bafkreiajkcu646s3w522spmlfuuhm67dke6jayqvgj7r5mir5ruhmpaa5y"}, "key": "key"}`
